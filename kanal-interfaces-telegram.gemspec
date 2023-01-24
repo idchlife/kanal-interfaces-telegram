@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = "https://github.com/idchlife/kanal-interfaces-telegram"
   spec.metadata["changelog_uri"] = "https://github.com/idchlife/kanal-interfaces-telegram"
 
-  spec.add_dependency "kanal"
+  # spec.add_dependency "kanal", git: "git@github.com:idchlife/kanal.git"
   spec.add_dependency "telegram-bot-ruby"
 
   # Specify which files should be added to the gem when it is released.

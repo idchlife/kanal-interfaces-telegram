@@ -11,8 +11,8 @@ module Kanal
     module Telegram
       # This interface helps working with telegram
       class TelegramInterface < Kanal::Core::Interfaces::Interface
-        def initialize(bot_token)
-          super()
+        def initialize(core, bot_token)
+          super(core)
 
           @bot_token = bot_token
 
