@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kanal-interfaces-telegram (0.2.0)
+    kanal-interfaces-telegram (0.2.1)
       telegram-bot-ruby
 
 GEM

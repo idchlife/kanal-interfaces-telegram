@@ -60,11 +60,14 @@ module Kanal
           }
 
           # TODO: rewrite with .find or .each
-          for mime, types in [images] do
-            for type in types do
-              return mime if filename.include? type
+          for pack in [images] do
+            for mime, types in pack do
+              for type in types do
+                return mime if filename.include? type
+              end
             end
           end
+
 
           "application/octet-stream"
         end
