@@ -4,13 +4,21 @@ require "kanal/core/core"
 require "kanal/plugins/batteries/batteries_plugin"
 require "kanal/interfaces/telegram/plugins/telegram_integration_plugin"
 
+class FakeChat
+  attr_reader :id
+
+  def initialize(id)
+    @id = id
+  end
+end
+
 class FakeTelegramMessage
   attr_reader :text,
-              :chat_id
+              :chat
 
   def initialize(text: nil, chat_id: nil)
     @text = text
-    @chat_id = chat_id
+    @chat = FakeChat.new chat_id
   end
 end
 
@@ -30,9 +38,7 @@ RSpec.describe Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin d
     core.register_plugin Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin.new
 
     core.router.default_response do
-      respond do
-        body "Default response"
-      end
+      body "Default response"
     end
 
     core.router.configure do
@@ -44,7 +50,7 @@ RSpec.describe Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin d
     end
 
     input = core.create_input
-    input.tg_message = FakeTelegramMessage.new text: "First one goes...", chat_id: 34567
+    input.tg_text = "First one goes..."
 
     output = core.router.create_output_for_input input
 
