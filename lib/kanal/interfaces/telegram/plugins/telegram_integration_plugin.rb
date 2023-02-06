@@ -17,14 +17,20 @@ module Kanal
 
           def register_parameters(core)
             core.register_input_parameter :tg_message, readonly: true
-            core.register_input_parameter :callback
-            core.register_input_parameter :image
-            core.register_input_parameter :audio
-            core.register_input_parameter :file_link
+            core.register_input_parameter :tg_text, readonly: true
+            core.register_input_parameter :tg_callback, readonly: true
+            core.register_input_parameter :tg_callback_text, readonly: true
+            core.register_input_parameter :tg_chat_id, readonly: true
+            core.register_input_parameter :tg_username, readonly: true
+            core.register_input_parameter :tg_image_link, readonly: true
+            core.register_input_parameter :tg_audio_link, readonly: true
+
+            core.register_output_parameter :tg_chat_id
             core.register_output_parameter :tg_text
             core.register_output_parameter :tg_reply_markup
             core.register_output_parameter :tg_image_path
             core.register_output_parameter :tg_audio_path
+            core.register_output_parameter :tg_document_path
           end
 
           def register_hooks(core)
@@ -33,18 +39,16 @@ module Kanal
             end
 
             core.hooks.attach :input_before_router do |input|
-              if input.tg_message.instance_of?(::Telegram::Bot::Types::CallbackQuery)
-                input.body = input.tg_message.data
-                input.callback = true
+              if input.tg_callback
+                input.body = input.tg_callback_text
               else
-                input.body = input.tg_message.text
-                input.image = input.tg_message.photo
-                input.audio = input.tg_message.audio
+                input.body = input.tg_text
               end
             end
 
             core.hooks.attach :output_before_returned do |input, output|
               output.tg_text = output.body
+              output.tg_chat_id = input.tg_chat_id
             end
           end
         end
