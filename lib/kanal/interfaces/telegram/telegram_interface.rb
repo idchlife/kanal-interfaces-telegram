@@ -121,9 +121,6 @@ module Kanal
               end
             end
           end
-
-
-          "application/octet-stream"
         end
       end
     end
