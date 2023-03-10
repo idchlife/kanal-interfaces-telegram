@@ -18,8 +18,12 @@ module Kanal
           def register_parameters(core)
             core.register_input_parameter :tg_message, readonly: true
             core.register_input_parameter :tg_text, readonly: true
+            core.register_input_parameter :tg_callback, readonly: true
+            core.register_input_parameter :tg_callback_text, readonly: true
             core.register_input_parameter :tg_chat_id, readonly: true
             core.register_input_parameter :tg_username, readonly: true
+            core.register_input_parameter :tg_image_link, readonly: true
+            core.register_input_parameter :tg_audio_link, readonly: true
 
             core.register_output_parameter :tg_chat_id
             core.register_output_parameter :tg_text
@@ -35,7 +39,11 @@ module Kanal
             end
 
             core.hooks.attach :input_before_router do |input|
-              input.body = input.tg_text
+              if input.tg_callback
+                input.body = input.tg_callback_text
+              else
+                input.body = input.tg_text
+              end
             end
 
             core.hooks.attach :output_before_returned do |input, output|

@@ -2,6 +2,9 @@
 
 require_relative "telegram/version"
 
+require "kanal/core/core"
+require "kanal/interfaces/telegram/telegram_interface"
+
 module Kanal
   module Interfaces
     module Telegram

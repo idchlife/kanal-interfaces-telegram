@@ -9,7 +9,7 @@ gem "rake", "~> 13.0"
 
 gem "rspec", "~> 3.0"
 
-gem "kanal"
+gem "kanal", "0.4.0"
 
 group :development do
   gem "rubocop", "~> 1.21"
