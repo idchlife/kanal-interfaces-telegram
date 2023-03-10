@@ -16,6 +16,8 @@ module Kanal
 
           @bot_token = bot_token
 
+          @bot = ::Telegram::Bot::Client.new(bot_token)
+
           @core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new
           @core.register_plugin Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin.new
         end
@@ -36,9 +38,11 @@ module Kanal
                 puts input.tg_username
                 puts input.tg_chat_id
 
-                output = router.create_output_for_input input
+                router.consume_input input
 
-                send_output bot, output
+                # output = router.create_output_for_input input
+                #
+                # send_output bot, output
               else
                 input = @core.create_input
 
@@ -71,12 +75,18 @@ module Kanal
                   input.tg_audio_link = audio_url
                 end
 
-                output = router.create_output_for_input input
+                router.consume_input input
 
-                send_output bot, output
+                # output = router.create_output_for_input input
+                #
+                # send_output bot, output
               end
             end
           end
+        end
+
+        def consume_output(output)
+          send_output @bot, output
         end
 
         private

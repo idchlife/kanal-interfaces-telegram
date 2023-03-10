@@ -41,6 +41,12 @@ RSpec.describe Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin d
       body "Default response"
     end
 
+    outputs = []
+
+    core.router.output_ready do |output|
+      outputs << output
+    end
+
     core.router.configure do
       on :body, starts_with: "First" do
         respond do
@@ -52,8 +58,12 @@ RSpec.describe Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin d
     input = core.create_input
     input.tg_text = "First one goes..."
 
-    output = core.router.create_output_for_input input
+    core.router.consume_input input
 
-    expect(output.body).to include "Got to first one"
+    expect(outputs.first.body).to include "Got to first one"
+
+    # output = core.router.create_output_for_input input
+    #
+    # expect(output.body).to include "Got to first one"
   end
 end
