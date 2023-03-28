@@ -47,8 +47,16 @@ RSpec.describe Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin d
       outputs << output
     end
 
+    core.add_condition_pack :tg_text do
+      add_condition :starts_with do
+        met? do |input, _core, _argument|
+          input.tg_text.include?(_argument)
+        end
+      end
+    end
+
     core.router.configure do
-      on :body, starts_with: "First" do
+      on :tg_text, starts_with: "First" do
         respond do
           body "Got to first one"
         end
@@ -61,9 +69,5 @@ RSpec.describe Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin d
     core.router.consume_input input
 
     expect(outputs.first.body).to include "Got to first one"
-
-    # output = core.router.create_output_for_input input
-    #
-    # expect(output.body).to include "Got to first one"
   end
 end
