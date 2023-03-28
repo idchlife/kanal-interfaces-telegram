@@ -20,6 +20,7 @@ module Kanal
 
           @core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new
           @core.register_plugin Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin.new
+
         end
 
         def start
@@ -27,60 +28,38 @@ module Kanal
             bot.listen do |message|
               puts "message class: #{message.class}"
 
-              if message.instance_of?(::Telegram::Bot::Types::CallbackQuery)
-                input = @core.create_input
+              input = @core.create_input
 
-                input.tg_callback = message
-                input.tg_callback_text = message.data
+              # Inline button pressed
+              if message.instance_of?(::Telegram::Bot::Types::CallbackQuery)
+                input.tg_button_pressed = message.data
                 input.tg_chat_id = message.from.id
                 input.tg_username = message.from.username
-
-                puts input.tg_username
-                puts input.tg_chat_id
-
-                router.consume_input input
-
-                # output = router.create_output_for_input input
-                #
-                # send_output bot, output
               else
-                input = @core.create_input
-
-                if message.text.nil?
-                  message.text = "EMPTY TEXT"
-                end
-
-                input.tg_message = message
+                # Regular message received
                 input.tg_text = message.text
                 input.tg_chat_id = message.chat.id
-                input.tg_username = message.chat.username || input.tg_message.from.username
-
-                puts input.tg_username
-                puts input.tg_chat_id
+                input.tg_username = message.chat.username || message.from.username
 
                 if message.photo.count > 0
-                  puts message.photo[0].file_id
-                  file = bot.api.get_file(file_id: message.photo[2].file_id)
-                  file_path = file.dig('result', 'file_path')
-                  photo_url = "https://api.telegram.org/file/bot#{@bot_token}/#{file_path}"
-                  puts photo_url
-                  input.tg_image_link = photo_url
+                  # Array of images contains thumbnails, we take 3rd element to get the high-res image
+                  input.tg_image_link = get_file_link message.photo[2].file_id
                 end
 
                 if message.audio.instance_of?(::Telegram::Bot::Types::Audio)
-                  file = bot.api.get_file(file_id: message.audio.file_id)
-                  file_path = file.dig('result', 'file_path')
-                  audio_url = "https://api.telegram.org/file/bot#{@bot_token}/#{file_path}"
-                  puts audio_url
-                  input.tg_audio_link = audio_url
+                  input.tg_audio_link = get_file_link message.audio.file_id
                 end
 
-                router.consume_input input
+                if message.video.instance_of?(::Telegram::Bot::Types::Video)
+                  input.tg_video_link = get_file_link message.video.file_id
+                end
 
-                # output = router.create_output_for_input input
-                #
-                # send_output bot, output
+                if message.document.instance_of?(::Telegram::Bot::Types::Document)
+                  input.tg_video_link = get_file_link message.document.file_id
+                end
               end
+
+              router.consume_input input
             end
           end
         end
@@ -90,6 +69,12 @@ module Kanal
         end
 
         private
+        def get_file_link(file_id)
+          file = bot.api.get_file(file_id: file_id)
+          file_path = file.dig('result', 'file_path')
+          "https://api.telegram.org/file/bot#{@bot_token}/#{file_path}"
+        end
+
         def send_output(bot, output)
           bot.api.send_message(
             chat_id: output.tg_chat_id,
@@ -111,23 +96,57 @@ module Kanal
           if !output.tg_audio_path.nil? && File.exist?(audio_path)
             bot.api.send_audio(
               chat_id: output.tg_chat_id,
-              audio: Faraday::UploadIO.new(output.tg_audio_path, "audio/mpeg3")
+              audio: Faraday::UploadIO.new(output.tg_audio_path, guess_mimetype(output.tg_audio_path))
+            )
+          end
+
+          video_path = output.tg_video_path
+
+          if !output.tg_video_path.nil? && File.exist?(video_path)
+            bot.api.send_video(
+              chat_id: output.tg_chat_id,
+              video: Faraday::UploadIO.new(output.tg_video_path, guess_mimetype(output.tg_video_path))
+            )
+          end
+
+          document_path = output.tg_document_path
+
+          if !output.tg_document_path.nil? && File.exist?(document_path)
+            bot.api.send_document(
+              chat_id: output.tg_chat_id,
+              document: Faraday::UploadIO.new(output.tg_document_path, guess_mimetype(output.tg_document_path))
             )
           end
         end
 
         def guess_mimetype(filename)
-          images = {
-            "image/jpeg" => %w[jpg jpeg],
-            "image/png" => ["png"],
-            "image/bmp" => ["bmp"]
-          }
+          media_types = [
+            images: {
+              "image/jpeg" => %w[jpg jpeg],
+              "image/png" => ["png"],
+              "image/bmp" => ["bmp"]
+            },
+            audios: {
+              "audio/mp3" => ["mp3"],
+              "audio/ogg" => ["ogg"],
+              "audio/vnd.wave" => ["wav"]
+            },
+            videos: {
+              "video/mp4" => ["mp4"],
+              "video/webm" => ["webm"]
+            },
+            documents: {
+              "application/msword" => %w[doc docx],
+              "application/pdf" => ["pdf"]
+            }
+          ]
 
-          # TODO: rewrite with .find or .each
-          for pack in [images] do
-            for mime, types in pack do
-              for type in types do
-                return mime if filename.include? type
+          media_types.each do |media_type|
+            media_type.each do |media_name, variant|
+              variant.each do |mime, extensions|
+                extensions.each do |extension|
+                  return mime if filename.include? extension
+                end
               end
             end
           end
