@@ -26,8 +26,6 @@ module Kanal
         def start
           ::Telegram::Bot::Client.run(@bot_token) do |bot|
             bot.listen do |message|
-              puts "message class: #{message.class}"
-
               input = @core.create_input
 
               # Inline button pressed
