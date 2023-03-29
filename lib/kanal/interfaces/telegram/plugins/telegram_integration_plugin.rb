@@ -19,7 +19,7 @@ module Kanal
             core.register_input_parameter :tg_chat_id, readonly: true
             core.register_input_parameter :tg_username, readonly: true
             core.register_input_parameter :tg_text, readonly: true
-            core.register_input_parameter :tg_button, readonly: true
+            core.register_input_parameter :tg_button_pressed, readonly: true
             core.register_input_parameter :tg_image_link, readonly: true
             core.register_input_parameter :tg_audio_link, readonly: true
             core.register_input_parameter :tg_video_link, readonly: true

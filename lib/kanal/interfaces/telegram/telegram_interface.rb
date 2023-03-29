@@ -3,6 +3,7 @@
 require "kanal/core/interfaces/interface"
 require "kanal/plugins/batteries/batteries_plugin"
 require_relative "./plugins/telegram_integration_plugin"
+require_relative "./../../helpers/telegram_link_parser"
 
 require "telegram/bot"
 
@@ -21,43 +22,13 @@ module Kanal
           @core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new
           @core.register_plugin Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin.new
 
+          @link_parser = Kanal::Helpers::TelegramLinkParser.new
         end
 
         def start
           ::Telegram::Bot::Client.run(@bot_token) do |bot|
             bot.listen do |message|
-              input = @core.create_input
-
-              # Inline button pressed
-              if message.instance_of?(::Telegram::Bot::Types::CallbackQuery)
-                input.tg_button_pressed = message.data
-                input.tg_chat_id = message.from.id
-                input.tg_username = message.from.username
-              else
-                # Regular message received
-                input.tg_text = message.text
-                input.tg_chat_id = message.chat.id
-                input.tg_username = message.chat.username || message.from.username
-
-                if message.photo.count > 0
-                  # Array of images contains thumbnails, we take 3rd element to get the high-res image
-                  input.tg_image_link = get_file_link message.photo[2].file_id
-                end
-
-                if message.audio.instance_of?(::Telegram::Bot::Types::Audio)
-                  input.tg_audio_link = get_file_link message.audio.file_id
-                end
-
-                if message.video.instance_of?(::Telegram::Bot::Types::Video)
-                  input.tg_video_link = get_file_link message.video.file_id
-                end
-
-                if message.document.instance_of?(::Telegram::Bot::Types::Document)
-                  input.tg_video_link = get_file_link message.document.file_id
-                end
-              end
-
-              router.consume_input input
+              router.consume_input create_input message
             end
           end
         end
@@ -66,12 +37,42 @@ module Kanal
           send_output @bot, output
         end
 
-        private
-        def get_file_link(file_id)
-          file = bot.api.get_file(file_id: file_id)
-          file_path = file.dig('result', 'file_path')
-          "https://api.telegram.org/file/bot#{@bot_token}/#{file_path}"
+        def create_input(message)
+          input = @core.create_input
+
+          if message.data.nil?
+            # Regular message received
+            input.tg_text = message.text
+            input.tg_chat_id = message.chat.id
+            input.tg_username = message.chat.username || message.from.username
+
+            if message.photo.count > 0
+              # Array of images contains thumbnails, we take 3rd element to get the high-res image
+              input.tg_image_link = @link_parser.get_file_link message.photo[2].file_id
+            end
+
+            if !message.audio.nil?
+              input.tg_audio_link = @link_parser.get_file_link message.audio.file_id
+            end
+
+            if !message.video.nil?
+              input.tg_video_link = @link_parser.get_file_link message.video.file_id
+            end
+
+            if !message.document.nil?
+              input.tg_document_link = @link_parser.get_file_link message.document.file_id
+            end
+          else
+            # Inline button pressed
+            input.tg_button_pressed = message.data
+            input.tg_chat_id = message.from.id
+            input.tg_username = message.from.username
+          end
+
+          input
         end
+
+        private
 
         def send_output(bot, output)
           bot.api.send_message(
