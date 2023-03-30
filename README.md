@@ -4,7 +4,9 @@ Welcome to Telegram interface!
 
 Integrate this interface into your Kanal app workflow and it will handle the incoming messages containing plain text or media (images, audio, videos, documents). You can attach media to your responses as well.
 
-Upon receiving a message or callback from end-user, Telegram interface will transform incoming data into standard Kanal input and feed it to router. Router will form an output (or outputs), which will be sent to Telegram interface. Telegram interface will send a message (or messages) to end-user.
+This interface relies on telegram-bot-ruby wrapper (https://github.com/atipugin/telegram-bot-ruby) to handle the actual communication with Telegram API.
+
+Upon receiving a message or callback from end-user through telegram-bot-ruby, Telegram interface will transform incoming data into standard Kanal input and feed it to router. Router will form an output (or outputs), which will be sent to Telegram interface. Telegram interface will send a message (or messages) through telegram-bot-ruby wrapper to end-user.
 
 It is advised to use telegram interface with Telegram bridge which converts Telegram interface input/output properties to standard Kanal properties.
 
@@ -28,25 +30,40 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ```bot = Kanal::Interfaces::Telegram::TelegramInterface.new core, "YOUR_TOKEN"```
 
-3. (Add bridge here???)
+3. You can use https://github.com/idchlife/kanal-plugins-batteries_bridge to convert Telegram interface specific parameters to general Kanal parameters. You will need to add bridge repo to Gemfile of your project.
 
-4. Configure your Kanal router - add responses for certain conditions (specific cases will be described further)
+```core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new```
+
+4. Add your condition packs (or use conditions provided by Batteries plugin)
+
 ```
-core.router.configure do
-    on :contains, text: "Hello" do
-        respond do
-            body "World!"
+# Condition pack if no batteries used
+core.add_condition_pack :tg_text do
+    add_condition :is do
+        with_argument
+        met? do |input, _core, argument| # 3 arguments provided to the block
+            input.tg_text == argument
         end
     end
-    
-    #etc...
+end
+
+core.router.configure do
+    # Response for condition created above
+    on :tg_text, is: "foo" do
+        respond do
+            tg_text "bar"
+        end
+    end
+end
+
+core.router.default_response do
+    tg_text "Default response"
 end
 ```
 
 5. Start your bot
 
 ```bot.start```
-
 
 ## Development
 
