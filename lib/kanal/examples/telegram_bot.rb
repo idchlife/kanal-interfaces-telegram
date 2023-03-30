@@ -9,12 +9,12 @@ module Kanal
       module TelegramBot
         core = Kanal::Core::Core.new
 
-        bot = Kanal::Interfaces::Telegram::TelegramInterface.new core, "5896231552:AAHsA_6jRIsiW92IAS-3N_FYTYPVsNsnEFA"
+        bot = Kanal::Interfaces::Telegram::TelegramInterface.new core, "YOUR_TOKEN"
 
         core.add_condition_pack :tg_text do
           add_condition :is do
             with_argument
-            met? do |input, _core, argument| # 3 arguments provided to the block
+            met? do |input, _core, argument|
               input.tg_text == argument
             end
           end
