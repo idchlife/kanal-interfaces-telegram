@@ -23,10 +23,13 @@ If bundler is not being used to manage dependencies, install the gem by executin
 1. Create instance of Core:
 
 ```core = Kanal::Core::Core.new```
+
 2. Create instance of Telegram interface
 
 ```bot = Kanal::Interfaces::Telegram::TelegramInterface.new core, "YOUR_TOKEN"```
+
 3. (Add bridge here???)
+
 4. Configure your Kanal router - add responses for certain conditions (specific cases will be described further)
 ```
 core.router.configure do
@@ -39,9 +42,11 @@ core.router.configure do
     #etc...
 end
 ```
+
 5. Start your bot
 
 ```bot.start```
+
 
 ## Development
 
