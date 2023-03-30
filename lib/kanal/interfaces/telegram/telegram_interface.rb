@@ -28,7 +28,6 @@ module Kanal
         def start
           ::Telegram::Bot::Client.run(@bot_token) do |bot|
             bot.listen do |message|
-              puts "listen"
               router.consume_input create_input message
             end
           end
@@ -40,8 +39,6 @@ module Kanal
 
         def create_input(message)
           input = @core.create_input
-
-          puts "Checking"
 
           if !message.instance_variable_defined?(:@data)
             # Regular message received
