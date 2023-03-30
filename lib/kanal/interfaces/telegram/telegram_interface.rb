@@ -3,7 +3,7 @@
 require "kanal/core/interfaces/interface"
 require "kanal/plugins/batteries/batteries_plugin"
 require_relative "./plugins/telegram_integration_plugin"
-require_relative "./../../helpers/telegram_link_parser"
+require_relative "./helpers/telegram_link_parser"
 
 require "telegram/bot"
 
@@ -22,7 +22,7 @@ module Kanal
           @core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new
           @core.register_plugin Kanal::Interfaces::Telegram::Plugins::TelegramIntegrationPlugin.new
 
-          @link_parser = Kanal::Helpers::TelegramLinkParser.new
+          @link_parser = Kanal::Interfaces::Telegram::Helpers::TelegramLinkParser.new
         end
 
         def start
