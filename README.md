@@ -1,8 +1,12 @@
 # Kanal::Interfaces::Telegram
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kanal/interfaces/telegram`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to Telegram interface!
 
-TODO: Delete this and the text above, and describe your gem
+Integrate this interface into your Kanal app workflow and it will handle the incoming messages containing plain text or media (images, audio, videos, documents). You can attach media to your responses as well.
+
+Upon receiving a message or callback from end-user, Telegram interface will transform incoming data into standard Kanal input and feed it to router. Router will form an output (or outputs), which will be sent to Telegram interface. Telegram interface will send a message (or messages) to end-user.
+
+It is advised to use telegram interface with Telegram bridge which converts Telegram interface input/output properties to standard Kanal properties.
 
 ## Installation
 
@@ -16,7 +20,28 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+1. Create instance of Core:
+
+```core = Kanal::Core::Core.new```
+2. Create instance of Telegram interface
+
+```bot = Kanal::Interfaces::Telegram::TelegramInterface.new core, "YOUR_TOKEN"```
+3. (Add bridge here???)
+4. Configure your Kanal router - add responses for certain conditions (specific cases will be described further)
+```
+core.router.configure do
+    on :contains, text: "Hello" do
+        respond do
+            body "World!"
+        end
+    end
+    
+    #etc...
+end
+```
+5. Start your bot
+
+```bot.start```
 
 ## Development
 
