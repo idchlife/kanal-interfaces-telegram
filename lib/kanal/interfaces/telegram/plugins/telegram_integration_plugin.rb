@@ -16,21 +16,22 @@ module Kanal
           end
 
           def register_parameters(core)
-            core.register_input_parameter :tg_message, readonly: true
-            core.register_input_parameter :tg_text, readonly: true
-            core.register_input_parameter :tg_callback, readonly: true
-            core.register_input_parameter :tg_callback_text, readonly: true
             core.register_input_parameter :tg_chat_id, readonly: true
             core.register_input_parameter :tg_username, readonly: true
+            core.register_input_parameter :tg_text, readonly: true
+            core.register_input_parameter :tg_button_pressed, readonly: true
             core.register_input_parameter :tg_image_link, readonly: true
             core.register_input_parameter :tg_audio_link, readonly: true
+            core.register_input_parameter :tg_video_link, readonly: true
+            core.register_input_parameter :tg_document_link, readonly: true
 
             core.register_output_parameter :tg_chat_id
             core.register_output_parameter :tg_text
-            core.register_output_parameter :tg_reply_markup
             core.register_output_parameter :tg_image_path
             core.register_output_parameter :tg_audio_path
+            core.register_output_parameter :tg_video_path
             core.register_output_parameter :tg_document_path
+            core.register_output_parameter :tg_reply_markup
           end
 
           def register_hooks(core)
@@ -38,16 +39,7 @@ module Kanal
               input.source = :telegram
             end
 
-            core.hooks.attach :input_before_router do |input|
-              if input.tg_callback
-                input.body = input.tg_callback_text
-              else
-                input.body = input.tg_text
-              end
-            end
-
             core.hooks.attach :output_before_returned do |input, output|
-              output.tg_text = output.body
               output.tg_chat_id = input.tg_chat_id
             end
           end
