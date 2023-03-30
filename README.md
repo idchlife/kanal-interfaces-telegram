@@ -6,9 +6,9 @@ Integrate this interface into your Kanal app workflow and it will handle the inc
 
 This interface relies on telegram-bot-ruby wrapper (https://github.com/atipugin/telegram-bot-ruby) to handle the actual communication with Telegram API.
 
-Upon receiving a message or callback from end-user through telegram-bot-ruby, Telegram interface will transform incoming data into standard Kanal input and feed it to router. Router will form an output (or outputs), which will be sent to Telegram interface. Telegram interface will send a message (or messages) through telegram-bot-ruby wrapper to end-user.
+Upon receiving a message or callback from end-user through telegram-bot-ruby, Telegram interface will transform incoming data into Kanal input with specific Telegram properties and feed it to router. Router will form an output (or outputs), which will be sent to Telegram interface. Telegram interface will send a message (or messages) through telegram-bot-ruby wrapper to end-user.
 
-It is advised to use telegram interface with Telegram bridge which converts Telegram interface input/output properties to standard Kanal properties.
+It is advised to use Telegram interface with Telegram bridge which converts specific input/output properties to standard Kanal properties.
 
 ## Installation
 
