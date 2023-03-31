@@ -48,19 +48,19 @@ module Kanal
 
             if message.photo.count > 0
               # Array of images contains thumbnails, we take 3rd element to get the high-res image
-              input.tg_image_link = @link_parser.get_file_link message.photo[2].file_id
+              input.tg_image_link = @link_parser.get_file_link message.photo[2].file_id, @bot, @bot_token
             end
 
             if !message.audio.nil?
-              input.tg_audio_link = @link_parser.get_file_link message.audio.file_id
+              input.tg_audio_link = @link_parser.get_file_link message.audio.file_id, @bot, @bot_token
             end
 
             if !message.video.nil?
-              input.tg_video_link = @link_parser.get_file_link message.video.file_id
+              input.tg_video_link = @link_parser.get_file_link message.video.file_id, @bot, @bot_token
             end
 
             if !message.document.nil?
-              input.tg_document_link = @link_parser.get_file_link message.document.file_id
+              input.tg_document_link = @link_parser.get_file_link message.document.file_id, @bot, @bot_token
             end
           else
             # Inline button pressed
