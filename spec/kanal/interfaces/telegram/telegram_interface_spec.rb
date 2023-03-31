@@ -43,7 +43,7 @@ class DummyButtonMessage < DummyMessage
 end
 
 class DummyLinkParser
-  def get_file_link(file_id)
+  def get_file_link(file_id, bot, bot_token)
     "https://somelink.with/file/id/#{file_id}"
   end
 end
