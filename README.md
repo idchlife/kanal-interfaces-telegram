@@ -1,8 +1,14 @@
 # Kanal::Interfaces::Telegram
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kanal/interfaces/telegram`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to Telegram interface!
 
-TODO: Delete this and the text above, and describe your gem
+Integrate this interface into your Kanal app workflow and it will handle the incoming messages containing plain text or media (images, audio, videos, documents). You can attach media to your responses as well.
+
+This interface relies on telegram-bot-ruby wrapper (https://github.com/atipugin/telegram-bot-ruby) to handle the actual communication with Telegram API.
+
+Upon receiving a message or callback from end-user through telegram-bot-ruby, Telegram interface will transform incoming data into Kanal input with specific Telegram properties and feed it to router. Router will form an output (or outputs), which will be sent to Telegram interface. Telegram interface will send a message (or messages) through telegram-bot-ruby wrapper to end-user.
+
+It is advised to use Telegram interface with Telegram bridge which converts specific input/output properties to standard Kanal properties.
 
 ## Installation
 
@@ -16,7 +22,48 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+1. Create instance of Core:
+
+```core = Kanal::Core::Core.new```
+
+2. Create instance of Telegram interface
+
+```interface = Kanal::Interfaces::Telegram::TelegramInterface.new core, "YOUR_TOKEN"```
+
+3. You can use https://github.com/idchlife/kanal-plugins-batteries_bridge to convert Telegram interface specific properties to Kanal Batteries plugin properties. Batteries plugin properties are using generally known keywords such as :body, :image, :audio etc. More info you can get inside batteries bridge plugin repository
+
+```core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new```
+
+4. Add your condition packs (or use conditions provided by Batteries plugin)
+
+```
+# Conditions need to be coded for usage in routing
+core.add_condition_pack :tg_text do
+    add_condition :is do
+        with_argument
+        met? do |input, _core, argument| # 3 arguments provided to the block
+            input.tg_text == argument
+        end
+    end
+end
+
+core.router.configure do
+    # Response for condition created above
+    on :tg_text, is: "foo" do
+        respond do
+            tg_text "bar"
+        end
+    end
+end
+
+core.router.default_response do
+    tg_text "Default response"
+end
+```
+
+5. Start your bot
+
+```interface.start```
 
 ## Development
 
