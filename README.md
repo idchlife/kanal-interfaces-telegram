@@ -63,7 +63,7 @@ end
 
 5. Start your bot
 
-```bot.start```
+```interface.start```
 
 ## Development
 
