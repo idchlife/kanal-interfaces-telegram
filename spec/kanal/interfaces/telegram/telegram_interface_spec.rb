@@ -21,6 +21,7 @@ class DummyAttachment
 end
 
 class DummyMessage
+
   attr_reader :chat, :from, :photo, :audio, :video, :document
 
   def initialize
