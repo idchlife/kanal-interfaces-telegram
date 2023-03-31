@@ -46,9 +46,9 @@ module Kanal
             input.tg_chat_id = message.chat.id
             input.tg_username = message.chat.username || message.from.username
 
-            if message.photo.count > 0
+            if !message.photo.nil?
               # Array of images contains thumbnails, we take 3rd element to get the high-res image
-              input.tg_image_link = @link_parser.get_file_link message.photo[2].file_id, @bot, @bot_token
+              input.tg_image_link = @link_parser.get_file_link message.photo.last.file_id, @bot, @bot_token
             end
 
             if !message.audio.nil?
