@@ -37,7 +37,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 4. Add your condition packs (or use conditions provided by Batteries plugin)
 
 ```
-# Condition pack if no batteries used
+# Conditions need to be coded for usage in routing
 core.add_condition_pack :tg_text do
     add_condition :is do
         with_argument
