@@ -11,6 +11,8 @@ gem "rspec", "~> 3.0"
 
 gem "kanal", "0.4.3"
 
+gem "telegram-bot-ruby", "1.0.0"
+
 group :development do
   gem "rubocop", "~> 1.21"
   gem "ruby-debug-ide"
