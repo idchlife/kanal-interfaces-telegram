@@ -40,7 +40,7 @@ module Kanal
         def create_input(message)
           input = @core.create_input
 
-          if message.data.nil?
+          if !message.instance_variable_defined?(:@data)
             # Regular message received
             input.tg_text = message.text
             input.tg_chat_id = message.chat.id
