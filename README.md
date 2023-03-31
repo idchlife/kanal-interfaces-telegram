@@ -30,7 +30,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ```bot = Kanal::Interfaces::Telegram::TelegramInterface.new core, "YOUR_TOKEN"```
 
-3. You can use https://github.com/idchlife/kanal-plugins-batteries_bridge to convert Telegram interface specific parameters to general Kanal parameters. You will need to add bridge repo to Gemfile of your project.
+3. You can use https://github.com/idchlife/kanal-plugins-batteries_bridge to convert Telegram interface specific properties to Kanal Batteries plugin properties. Batteries plugin properties are using generally known keywords such as :body, :image, :audio etc. More info you can get inside batteries bridge plugin repository
 
 ```core.register_plugin Kanal::Plugins::Batteries::BatteriesPlugin.new```
 
