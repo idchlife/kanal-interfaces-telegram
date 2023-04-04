@@ -1,7 +1,9 @@
 PATH
   remote: .
   specs:
-    kanal-interfaces-telegram (0.3.1)
+    kanal-interfaces-telegram (0.3.4)
+      kanal (= 0.4.3)
+      telegram-bot-ruby (= 1.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -129,7 +131,6 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  kanal (= 0.4.3)
   kanal-interfaces-telegram!
   rake (~> 13.0)
   rspec (~> 3.0)
@@ -137,7 +138,6 @@ DEPENDENCIES
   ruby-debug-ide
   simplecov
   solargraph
-  telegram-bot-ruby (= 1.0.0)
   yard
 
 BUNDLED WITH
