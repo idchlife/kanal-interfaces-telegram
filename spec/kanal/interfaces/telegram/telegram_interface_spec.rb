@@ -22,7 +22,7 @@ end
 
 class DummyMessage
 
-  attr_reader :chat, :from, :photo, :audio, :video, :document
+  attr_reader :chat, :from, :photo, :audio, :video, :document, :attributes
 
   def initialize
     @from = FromOrChat.new
@@ -31,15 +31,30 @@ class DummyMessage
     @audio = DummyAttachment.new("audio")
     @video = DummyAttachment.new("video")
     @document = DummyAttachment.new("document")
+    @attributes = {}
   end
 end
 
 class DummyTextMessage < DummyMessage
-  attr_accessor :text
+  def initialize
+    super
+    @attributes[:text] = "message_text"
+  end
+
+  def text
+    @attributes[:text]
+  end
 end
 
 class DummyButtonMessage < DummyMessage
-  attr_accessor :data
+  def initialize
+    super
+    @attributes[:data] = "button_text"
+  end
+
+  def data
+    @attributes[:data]
+  end
 end
 
 class DummyLinkParser
@@ -70,7 +85,6 @@ RSpec.describe Kanal::Interfaces::Telegram::TelegramInterface do
     interface = InterfaceWithDummyParser.new core, "SOME_BOT_TOKEN"
 
     text_message = DummyTextMessage.new
-    text_message.text = "message_text"
     text_input = interface.create_input text_message
     expect(text_input.tg_text).to eq "message_text"
     expect(text_input.tg_chat_id).to eq "some_id"
@@ -81,7 +95,6 @@ RSpec.describe Kanal::Interfaces::Telegram::TelegramInterface do
     expect(text_input.tg_document_link).to eq "https://somelink.with/file/id/document"
 
     button_pressed = DummyButtonMessage.new
-    button_pressed.data = "button_text"
     button_input = interface.create_input button_pressed
     expect(button_input.tg_button_pressed).to eq "button_text"
     expect(button_input.tg_chat_id).to eq "some_id"
