@@ -40,11 +40,19 @@ module Kanal
         def create_input(message)
           input = @core.create_input
 
-          if message.attributes.key?(:text)
+          if message.attributes.key?(:data)
+            # Inline button pressed
+            input.tg_button_pressed = message.data
+            input.tg_chat_id = message.from.id
+            input.tg_username = message.from.username
+          else
             # Regular message received
-            input.tg_text = message.text
             input.tg_chat_id = message.chat.id
             input.tg_username = message.chat.username || message.from.username
+
+            if !message.text.nil?
+              input.tg_text = message.text
+            end
 
             if !message.photo.nil?
               # Array of images contains thumbnails, we take 3rd element to get the high-res image
@@ -62,11 +70,6 @@ module Kanal
             if !message.document.nil?
               input.tg_document_link = @link_parser.get_file_link message.document.file_id, @bot, @bot_token
             end
-          else
-            # Inline button pressed
-            input.tg_button_pressed = message.data
-            input.tg_chat_id = message.from.id
-            input.tg_username = message.from.username
           end
 
           input

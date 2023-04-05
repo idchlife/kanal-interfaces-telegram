@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kanal-interfaces-telegram (0.3.4)
+    kanal-interfaces-telegram (0.3.5)
       kanal (= 0.4.3)
       telegram-bot-ruby (= 1.0.0)
 
