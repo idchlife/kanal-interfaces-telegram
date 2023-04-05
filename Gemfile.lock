@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kanal-interfaces-telegram (0.3.4)
+    kanal-interfaces-telegram (0.3.6)
       kanal (= 0.4.3)
       telegram-bot-ruby (= 1.0.0)
 
@@ -128,6 +128,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -141,4 +142,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   2.4.5
+   2.4.9
