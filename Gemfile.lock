@@ -139,6 +139,7 @@ DEPENDENCIES
   ruby-debug-ide
   simplecov
   solargraph
+  telegram-bot-ruby (= 1.0.0)
   yard
 
 BUNDLED WITH
