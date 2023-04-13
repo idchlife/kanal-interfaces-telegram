@@ -40,7 +40,7 @@ module Kanal
             end
 
             core.hooks.attach :output_before_returned do |input, output|
-              output.tg_chat_id = input.tg_chat_id
+              output.tg_chat_id = input.tg_chat_id if output.tg_chat_id.nil?
             end
           end
         end
