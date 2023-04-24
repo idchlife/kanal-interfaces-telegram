@@ -3,7 +3,7 @@
 module Kanal
   module Interfaces
     module Telegram
-      VERSION = "0.4.0"
+      VERSION = "0.4.1"
     end
   end
 end
